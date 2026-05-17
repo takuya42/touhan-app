@@ -16,94 +16,155 @@ class QuestionQuizPage extends ConsumerStatefulWidget {
   final int questionNumber;
 
   @override
-  ConsumerState<QuestionQuizPage> createState() => _QuestionQuizPageState();
+  ConsumerState<QuestionQuizPage> createState() =>
+      _QuestionQuizPageState();
 }
 
-class _QuestionQuizPageState extends ConsumerState<QuestionQuizPage> {
+class _QuestionQuizPageState
+    extends ConsumerState<QuestionQuizPage> {
   int? _selectedIndex;
   bool _submitted = false;
 
   void _submitAnswer() {
     if (_selectedIndex == null) return;
+
+    final selected = _selectedIndex!;
+    final isCorrect = widget.question.isCorrect(selected);
+
     setState(() {
       _submitted = true;
     });
 
-    if (!widget.question.isCorrect(_selectedIndex!)) {
-      ref.read(wrongQuestionIdsProvider.notifier).add(widget.question.id);
+    if (isCorrect) {
+      ref.read(correctAnswerCountProvider.notifier).state++;
+    } else {
+      ref.read(wrongAnswerCountProvider.notifier).state++;
+
+      ref
+          .read(wrongQuestionIdsProvider.notifier)
+          .add(widget.question.id);
     }
+
+    final historyEntry =
+        '${DateTime.now().toIso8601String()}|${widget.question.id}|${isCorrect ? 'correct' : 'wrong'}';
+
+    ref.read(studyHistoryProvider.notifier).state = [
+      historyEntry,
+      ...ref.read(studyHistoryProvider),
+    ];
   }
 
   @override
   Widget build(BuildContext context) {
-    final isCorrect = _selectedIndex != null &&
+    final isCorrect =
+        _selectedIndex != null &&
         widget.question.isCorrect(_selectedIndex!);
 
     return Scaffold(
-      appBar: AppBar(title: Text('問題 ${widget.questionNumber}')),
+      appBar: AppBar(
+        title: Text('問題 ${widget.questionNumber}'),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment:
+                CrossAxisAlignment.start,
             children: [
               Text(
                 widget.question.category.label,
-                style: Theme.of(context).textTheme.labelLarge,
+                style: Theme.of(context)
+                    .textTheme
+                    .labelLarge,
               ),
+
               const SizedBox(height: 8),
+
               Text(
                 widget.question.questionText,
-                style: Theme.of(context).textTheme.titleMedium,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium,
               ),
+
               const SizedBox(height: 16),
+
               Expanded(
                 child: ListView.builder(
-                  itemCount: widget.question.choices.length,
+                  itemCount:
+                      widget.question.choices.length,
                   itemBuilder: (context, index) {
                     return ChoiceTile(
-                      text: widget.question.choices[index],
+                      text:
+                          widget.question.choices[index],
                       index: index,
                       selectedIndex: _selectedIndex,
-                      correctIndex: widget.question.correctIndex,
+                      correctIndex:
+                          widget.question.correctIndex,
                       submitted: _submitted,
                       onTap: () {
                         if (_submitted) return;
-                        setState(() => _selectedIndex = index);
+
+                        setState(() {
+                          _selectedIndex = index;
+                        });
                       },
                     );
                   },
                 ),
               ),
+
               const SizedBox(height: 12),
+
               if (_submitted)
                 _ResultCard(
                   correct: isCorrect,
-                  explanation: widget.question.explanation,
+                  explanation:
+                      widget.question.explanation,
                 ),
+
               const SizedBox(height: 12),
+
               SizedBox(
                 width: double.infinity,
                 child: FilledButton(
-                  onPressed: _submitted ? null : _submitAnswer,
+                  onPressed:
+                      _submitted
+                          ? null
+                          : _submitAnswer,
                   child: const Text('回答する'),
                 ),
               ),
+
               if (_submitted && !isCorrect) ...[
                 const SizedBox(height: 8),
+
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(
                     onPressed: () {
                       ref
-                          .read(wrongQuestionIdsProvider.notifier)
+                          .read(
+                            wrongQuestionIdsProvider
+                                .notifier,
+                          )
                           .add(widget.question.id);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('間違えた問題に保存しました')),
+
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            '間違えた問題に保存しました',
+                          ),
+                        ),
                       );
                     },
-                    icon: const Icon(Icons.bookmark_add_outlined),
-                    label: const Text('間違えた問題として保存'),
+                    icon: const Icon(
+                      Icons.bookmark_add_outlined,
+                    ),
+                    label: const Text(
+                      '間違えた問題として保存',
+                    ),
                   ),
                 ),
               ],
@@ -116,35 +177,55 @@ class _QuestionQuizPageState extends ConsumerState<QuestionQuizPage> {
 }
 
 class _ResultCard extends StatelessWidget {
-  const _ResultCard({required this.correct, required this.explanation});
+  const _ResultCard({
+    required this.correct,
+    required this.explanation,
+  });
 
   final bool correct;
   final String explanation;
 
   @override
   Widget build(BuildContext context) {
-    final color = correct ? Colors.green : Colors.red;
+    final color =
+        correct ? Colors.green : Colors.red;
 
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment:
+              CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(correct ? Icons.check_circle : Icons.cancel, color: color),
+                Icon(
+                  correct
+                      ? Icons.check_circle
+                      : Icons.cancel,
+                  color: color,
+                ),
+
                 const SizedBox(width: 8),
+
                 Text(
-                  correct ? '正解です！' : '不正解です',
+                  correct
+                      ? '正解です！'
+                      : '不正解です',
                   style: Theme.of(context)
                       .textTheme
                       .titleSmall
-                      ?.copyWith(color: color, fontWeight: FontWeight.bold),
+                      ?.copyWith(
+                        color: color,
+                        fontWeight:
+                            FontWeight.bold,
+                      ),
                 ),
               ],
             ),
+
             const SizedBox(height: 8),
+
             Text('解説: $explanation'),
           ],
         ),
