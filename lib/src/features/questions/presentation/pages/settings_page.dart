@@ -4,6 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/question_providers.dart';
 import '../../application/study_persistence.dart';
 import 'ai_chat_page.dart';
+import '../../application/auth_providers.dart';
+import 'login_page.dart';
+import 'register_page.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -12,6 +15,7 @@ class SettingsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final darkMode = ref.watch(darkModeProvider);
     final notifications = ref.watch(notificationsEnabledProvider);
+    final authState = ref.watch(authStateProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('設定')),
@@ -24,6 +28,63 @@ class SettingsPage extends ConsumerWidget {
               title: const Text('学習者プロフィール'),
               subtitle: const Text('登録販売者 試験対策を継続中'),
               trailing: const Icon(Icons.emoji_events_outlined),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: authState.when(
+                data: (user) {
+                  if (user == null) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('ログイン', style: Theme.of(context).textTheme.titleMedium),
+                        const SizedBox(height: 8),
+                        const Text('学習データの同期にログインできます。'),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton(
+                                onPressed: () => Navigator.of(context).push(
+                                  MaterialPageRoute<void>(builder: (_) => const LoginPage()),
+                                ),
+                                child: const Text('ログイン'),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: FilledButton(
+                                onPressed: () => Navigator.of(context).push(
+                                  MaterialPageRoute<void>(builder: (_) => const RegisterPage()),
+                                ),
+                                child: const Text('新規登録'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  }
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('ログイン中', style: Theme.of(context).textTheme.titleMedium),
+                      const SizedBox(height: 8),
+                      Text('メール: ${user.email ?? '-'}'),
+                      const SizedBox(height: 12),
+                      FilledButton.tonal(
+                        onPressed: () => ref.read(firebaseAuthProvider).signOut(),
+                        child: const Text('ログアウト'),
+                      ),
+                    ],
+                  );
+                },
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (e, _) => Text('認証状態の取得に失敗しました: $e'),
+              ),
             ),
           ),
           const SizedBox(height: 8),

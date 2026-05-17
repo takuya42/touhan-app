@@ -56,6 +56,7 @@ class _QuestionQuizPageState extends ConsumerState<QuestionQuizPage> {
 
   @override
   Widget build(BuildContext context) {
+    final questions = ref.watch(questionsProvider);
     final isCorrect = _selectedIndex != null &&
         widget.question.isCorrect(_selectedIndex!);
 
@@ -156,6 +157,59 @@ class _QuestionQuizPageState extends ConsumerState<QuestionQuizPage> {
                     padding: const EdgeInsets.all(12),
                     child: Text(_aiExplanation!),
                   ),
+                ),
+              ],
+              if (_submitted) ...[
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          final currentIndex = questions.indexWhere((q) => q.id == widget.question.id);
+                          final nextIndex = currentIndex >= 0
+                              ? (currentIndex + 1) % questions.length
+                              : 0;
+                          final nextQuestion = questions[nextIndex];
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute<void>(
+                              builder: (_) => QuestionQuizPage(
+                                question: nextQuestion,
+                                questionNumber: nextIndex + 1,
+                              ),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.arrow_forward),
+                        label: const Text('次へ'),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: FilledButton.icon(
+                        onPressed: () {
+                          final otherQuestions =
+                              questions.where((q) => q.id != widget.question.id).toList();
+                          otherQuestions.shuffle();
+                          final randomQuestion = otherQuestions.isEmpty
+                              ? widget.question
+                              : otherQuestions.first;
+                          final randomIndex =
+                              questions.indexWhere((q) => q.id == randomQuestion.id);
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute<void>(
+                              builder: (_) => QuestionQuizPage(
+                                question: randomQuestion,
+                                questionNumber: (randomIndex + 1),
+                              ),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.shuffle),
+                        label: const Text('ランダム'),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ],
