@@ -39,6 +39,7 @@ final favoriteQuestionIdsProvider =
     );
 final currentStreakProvider = StateProvider<int>((ref) => 0);
 final todayStudySecondsProvider = StateProvider<int>((ref) => 0);
+final notificationsEnabledProvider = StateProvider<bool>((ref) => true);
 
 class FavoriteQuestionIdsNotifier extends StateNotifier<Set<String>> {
   FavoriteQuestionIdsNotifier() : super(<String>{});
