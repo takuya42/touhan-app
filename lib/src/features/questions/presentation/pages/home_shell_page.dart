@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../application/study_persistence.dart';
 import '../../application/question_providers.dart';
 import '../../domain/question.dart';
 import 'question_list_page.dart';
@@ -15,6 +16,17 @@ class HomeShellPage extends ConsumerStatefulWidget {
 
 class _HomeShellPageState extends ConsumerState<HomeShellPage> {
   int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    Future<void>.microtask(() async {
+      await ref.read(studyPersistenceProvider).load(ref);
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +63,10 @@ class _HomeDashboard extends ConsumerWidget {
     final correct = ref.watch(correctAnswerCountProvider);
     final wrong = ref.watch(wrongAnswerCountProvider);
     final darkMode = ref.watch(darkModeProvider);
+    final streak = ref.watch(currentStreakProvider);
+    final todayStudySec = ref.watch(todayStudySecondsProvider);
+    final total = (correct + wrong);
+    final accuracy = total == 0 ? 0.0 : correct / total;
 
     return Scaffold(
       appBar: AppBar(
@@ -58,7 +74,10 @@ class _HomeDashboard extends ConsumerWidget {
         actions: [
           Switch(
             value: darkMode,
-            onChanged: (value) => ref.read(darkModeProvider.notifier).state = value,
+            onChanged: (value) async {
+              ref.read(darkModeProvider.notifier).state = value;
+              await ref.read(studyPersistenceProvider).save(ref);
+            },
           ),
         ],
       ),
@@ -80,6 +99,35 @@ class _HomeDashboard extends ConsumerWidget {
                       const SizedBox(width: 12),
                       Expanded(child: _StatTile(label: '不正解数', value: '$wrong', color: Colors.deepOrange)),
                     ],
+                  ),
+                  const SizedBox(height: 12),
+                  TweenAnimationBuilder<double>(
+                    tween: Tween<double>(begin: 0, end: accuracy),
+                    duration: const Duration(milliseconds: 600),
+                    builder: (context, value, child) => LinearProgressIndicator(value: value),
+                  ),
+                  const SizedBox(height: 6),
+                  Text('正答率: ${(accuracy * 100).toStringAsFixed(1)}%'),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Card(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('ランキング風 学習表示', style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: 8),
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const CircleAvatar(child: Text('🥇')),
+                    title: const Text('あなた'),
+                    subtitle: Text('連続正解: $streak'),
+                    trailing: Text('学習 ${(todayStudySec / 60).toStringAsFixed(1)}分'),
                   ),
                 ],
               ),
@@ -128,7 +176,7 @@ class _StatTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(14),
       ),
       child: Column(

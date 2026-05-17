@@ -28,10 +28,10 @@ class ChoiceTile extends StatelessWidget {
 
     if (submitted) {
       if (isCorrectChoice) {
-        backgroundColor = Colors.green.withValues(alpha: 0.15);
+        backgroundColor = Colors.green.withOpacity(0.15);
         icon = Icons.check;
       } else if (isSelected && !isCorrectChoice) {
-        backgroundColor = Colors.red.withValues(alpha: 0.15);
+        backgroundColor = Colors.red.withOpacity(0.15);
         icon = Icons.close;
       }
     }
