@@ -12,6 +12,7 @@ class StudyPersistenceService {
   static const _keyFavorites = 'favorite_ids';
   static const _keyStreak = 'current_streak';
   static const _keyStudySec = 'today_study_seconds';
+  static const _keyNotify = 'notifications_enabled';
 
   Future<void> load(WidgetRef ref) async {
     final prefs = await SharedPreferences.getInstance();
@@ -23,6 +24,7 @@ class StudyPersistenceService {
     ref.read(favoriteQuestionIdsProvider.notifier).setAll(prefs.getStringList(_keyFavorites) ?? <String>[]);
     ref.read(currentStreakProvider.notifier).state = prefs.getInt(_keyStreak) ?? 0;
     ref.read(todayStudySecondsProvider.notifier).state = prefs.getInt(_keyStudySec) ?? 0;
+    ref.read(notificationsEnabledProvider.notifier).state = prefs.getBool(_keyNotify) ?? true;
   }
 
   Future<void> save(WidgetRef ref) async {
@@ -35,6 +37,7 @@ class StudyPersistenceService {
     await prefs.setStringList(_keyFavorites, ref.read(favoriteQuestionIdsProvider).toList());
     await prefs.setInt(_keyStreak, ref.read(currentStreakProvider));
     await prefs.setInt(_keyStudySec, ref.read(todayStudySecondsProvider));
+    await prefs.setBool(_keyNotify, ref.read(notificationsEnabledProvider));
   }
 }
 

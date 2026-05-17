@@ -6,6 +6,7 @@ import '../../application/question_providers.dart';
 import '../../domain/question.dart';
 import 'question_list_page.dart';
 import 'question_quiz_page.dart';
+import 'settings_page.dart';
 
 class HomeShellPage extends ConsumerStatefulWidget {
   const HomeShellPage({super.key});
@@ -35,6 +36,7 @@ class _HomeShellPageState extends ConsumerState<HomeShellPage> {
       const QuestionListPage(),
       const _WrongQuestionsPage(),
       const _StudyHistoryPage(),
+      const SettingsPage(),
     ];
 
     return Scaffold(
@@ -47,6 +49,7 @@ class _HomeShellPageState extends ConsumerState<HomeShellPage> {
           NavigationDestination(icon: Icon(Icons.list_alt_outlined), selectedIcon: Icon(Icons.list_alt), label: '問題'),
           NavigationDestination(icon: Icon(Icons.bookmark_outline), selectedIcon: Icon(Icons.bookmark), label: '復習'),
           NavigationDestination(icon: Icon(Icons.history_outlined), selectedIcon: Icon(Icons.history), label: '履歴'),
+          NavigationDestination(icon: Icon(Icons.settings_outlined), selectedIcon: Icon(Icons.settings), label: '設定'),
         ],
       ),
     );
