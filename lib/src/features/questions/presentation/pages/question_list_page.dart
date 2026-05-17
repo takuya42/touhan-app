@@ -17,16 +17,23 @@ class QuestionListPage extends ConsumerWidget {
     final filteredQuestions = selectedCategory == null
         ? questions
         : questions
-            .where((question) => question.category == selectedCategory)
+            .where(
+              (question) => question.category == selectedCategory,
+            )
             .toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('問題一覧')),
+      appBar: AppBar(
+        title: const Text('問題一覧'),
+      ),
       body: Column(
         children: [
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 8,
+            ),
             child: Row(
               children: [
                 ChoiceChip(
@@ -36,7 +43,9 @@ class QuestionListPage extends ConsumerWidget {
                     ref.read(selectedCategoryProvider.notifier).state = null;
                   },
                 ),
+
                 const SizedBox(width: 8),
+
                 ...QuestionCategory.values.map(
                   (category) => Padding(
                     padding: const EdgeInsets.only(right: 8),
@@ -53,6 +62,7 @@ class QuestionListPage extends ConsumerWidget {
               ],
             ),
           ),
+
           Expanded(
             child: ListView.separated(
               padding: const EdgeInsets.all(16),
@@ -64,10 +74,17 @@ class QuestionListPage extends ConsumerWidget {
 
                 return Card(
                   child: ListTile(
-                    title: Text('Q${index + 1}. ${question.questionText}'),
-                    subtitle: Text('カテゴリ: ${question.category.label}'),
+                    title: Text(
+                      'Q${index + 1}. ${question.questionText}',
+                    ),
+                    subtitle: Text(
+                      'カテゴリ: ${question.category.label}',
+                    ),
                     trailing: wrongSaved
-                        ? const Icon(Icons.bookmark, color: Colors.orange)
+                        ? const Icon(
+                            Icons.bookmark,
+                            color: Colors.orange,
+                          )
                         : const Icon(Icons.chevron_right),
                     onTap: () {
                       Navigator.of(context).push(

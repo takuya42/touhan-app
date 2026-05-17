@@ -4,15 +4,22 @@ class AppTheme {
   const AppTheme._();
 
   static ThemeData light() {
-    final colorScheme = ColorScheme.fromSeed(seedColor: Colors.teal);
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: Colors.teal,
+    );
+
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
-      appBarTheme: const AppBarTheme(centerTitle: false),
+      appBarTheme: const AppBarTheme(
+        centerTitle: false,
+      ),
       scaffoldBackgroundColor: const Color(0xFFF7F9FC),
       cardTheme: CardThemeData(
         margin: const EdgeInsets.symmetric(vertical: 6),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18),
+        ),
         elevation: 0,
         color: colorScheme.surface,
       ),
@@ -31,13 +38,18 @@ class AppTheme {
       seedColor: Colors.teal,
       brightness: Brightness.dark,
     );
+
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
-      appBarTheme: const AppBarTheme(centerTitle: false),
+      appBarTheme: const AppBarTheme(
+        centerTitle: false,
+      ),
       cardTheme: CardThemeData(
         margin: const EdgeInsets.symmetric(vertical: 6),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18),
+        ),
         elevation: 0,
       ),
       navigationBarTheme: NavigationBarThemeData(
