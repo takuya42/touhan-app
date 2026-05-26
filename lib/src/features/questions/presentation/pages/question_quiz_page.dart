@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../application/ai_explanation_service.dart';
+import '../../../auth/application/auth_providers.dart';
+import '../../application/ai_usage_service.dart';
 import '../../application/question_providers.dart';
 import '../../application/study_persistence.dart';
 import '../../domain/question.dart';
@@ -137,8 +138,19 @@ class _QuestionQuizPageState extends ConsumerState<QuestionQuizPage> {
                         ? null
                         : () async {
                             setState(() => _aiLoading = true);
-                            final service = MockAiExplanationService();
-                            final value = await service.generateExplanation(widget.question);
+                            final user = ref.read(firebaseAuthProvider).currentUser;
+                            if (user == null) return;
+                            final usage = AiUsageService();
+                            final canUse = await usage.canUseAi(userId: user.uid);
+                            if (!canUse) {
+                              if (mounted) {
+                                showDialog<void>(context: context, builder: (_) => AlertDialog(title: const Text('利用上限'), content: const Text('本日の無料利用回数を超えました。\nProプランでAI機能を無制限利用できます。'), actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))]));
+                              }
+                              setState(() => _aiLoading = false);
+                              return;
+                            }
+                            await usage.consumeAiUse(userId: user.uid);
+                            final value = 'AI解説（モック）: ${widget.question.explanation}';
                             if (!mounted) return;
                             setState(() {
                               _aiExplanation = value;
