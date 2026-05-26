@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../application/ai_explanation_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import '../../../auth/application/auth_providers.dart';
 import '../../application/question_providers.dart';
 import '../../application/study_persistence.dart';
 import '../../domain/question.dart';
@@ -137,8 +139,25 @@ class _QuestionQuizPageState extends ConsumerState<QuestionQuizPage> {
                         ? null
                         : () async {
                             setState(() => _aiLoading = true);
-                            final service = MockAiExplanationService();
-                            final value = await service.generateExplanation(widget.question);
+                            final user = ref.read(firebaseAuthProvider).currentUser;
+                            if (user == null) return;
+                            final doc = FirebaseFirestore.instance.collection('ai_usage').doc(user.uid);
+                            final now = DateTime.now();
+                            final key = '${now.year}-${now.month}-${now.day}';
+                            final snap = await doc.get();
+                            final data = snap.data() ?? <String, dynamic>{};
+                            final date = data['date'] as String?;
+                            final count = (data['count'] as num?)?.toInt() ?? 0;
+                            final todayCount = date == key ? count : 0;
+                            if (todayCount >= 3) {
+                              if (mounted) {
+                                showDialog<void>(context: context, builder: (_) => AlertDialog(title: const Text('利用上限'), content: const Text('本日の無料回数を超えました。\nProプランで無制限利用できます。'), actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))]));
+                              }
+                              setState(() => _aiLoading = false);
+                              return;
+                            }
+                            await doc.set({'date': key, 'count': todayCount + 1});
+                            final value = 'AI解説（モック）: ${widget.question.explanation}';
                             if (!mounted) return;
                             setState(() {
                               _aiExplanation = value;
