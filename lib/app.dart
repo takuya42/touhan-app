@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'src/features/questions/application/question_providers.dart';
-import 'src/features/questions/presentation/pages/home_shell_page.dart';
 import 'src/core/theme/app_theme.dart';
+import 'src/features/auth/application/auth_providers.dart';
+import 'src/features/auth/presentation/pages/auth_gate.dart';
 
 class TouhanApp extends ConsumerWidget {
   const TouhanApp({super.key});
@@ -17,7 +17,7 @@ class TouhanApp extends ConsumerWidget {
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: darkMode ? ThemeMode.dark : ThemeMode.light,
-      home: const HomeShellPage(),
+      home: const AuthGate(),
     );
   }
 }
