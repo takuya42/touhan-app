@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-<<<<<<< HEAD
 import '../../../auth/application/auth_providers.dart';
 import '../../application/ai_usage_service.dart';
-=======
-import 'package:cloud_firestore/cloud_firestore.dart';
-
-import '../../../auth/application/auth_providers.dart';
->>>>>>> main
 import '../../application/question_providers.dart';
 import '../../application/study_persistence.dart';
 import '../../domain/question.dart';
@@ -25,10 +19,12 @@ class QuestionQuizPage extends ConsumerStatefulWidget {
   final int questionNumber;
 
   @override
-  ConsumerState<QuestionQuizPage> createState() => _QuestionQuizPageState();
+  ConsumerState<QuestionQuizPage> createState() =>
+      _QuestionQuizPageState();
 }
 
-class _QuestionQuizPageState extends ConsumerState<QuestionQuizPage> {
+class _QuestionQuizPageState
+    extends ConsumerState<QuestionQuizPage> {
   int? _selectedIndex;
   bool _submitted = false;
   String? _aiExplanation;
@@ -36,8 +32,10 @@ class _QuestionQuizPageState extends ConsumerState<QuestionQuizPage> {
 
   void _submitAnswer() {
     if (_selectedIndex == null) return;
+
     final selected = _selectedIndex!;
     final isCorrect = widget.question.isCorrect(selected);
+
     setState(() {
       _submitted = true;
     });
@@ -47,28 +45,37 @@ class _QuestionQuizPageState extends ConsumerState<QuestionQuizPage> {
       ref.read(currentStreakProvider.notifier).state++;
     } else {
       ref.read(wrongAnswerCountProvider.notifier).state++;
-      ref.read(wrongQuestionIdsProvider.notifier).add(widget.question.id);
+      ref
+          .read(wrongQuestionIdsProvider.notifier)
+          .add(widget.question.id);
+
       ref.read(currentStreakProvider.notifier).state = 0;
     }
+
     ref.read(todayStudySecondsProvider.notifier).state += 30;
 
     final historyEntry =
         '${DateTime.now().toIso8601String()}|${widget.question.id}|${isCorrect ? 'correct' : 'wrong'}';
+
     ref.read(studyHistoryProvider.notifier).state = [
       historyEntry,
       ...ref.read(studyHistoryProvider),
     ];
+
     ref.read(studyPersistenceProvider).save(ref);
   }
 
   @override
   Widget build(BuildContext context) {
     final questions = ref.watch(questionsProvider);
+
     final isCorrect = _selectedIndex != null &&
         widget.question.isCorrect(_selectedIndex!);
 
     return Scaffold(
-      appBar: AppBar(title: Text('問題 ${widget.questionNumber}')),
+      appBar: AppBar(
+        title: Text('問題 ${widget.questionNumber}'),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -79,12 +86,16 @@ class _QuestionQuizPageState extends ConsumerState<QuestionQuizPage> {
                 widget.question.category.label,
                 style: Theme.of(context).textTheme.labelLarge,
               ),
+
               const SizedBox(height: 8),
+
               Text(
                 widget.question.questionText,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
+
               const SizedBox(height: 16),
+
               Expanded(
                 child: ListView.builder(
                   itemCount: widget.question.choices.length,
@@ -93,156 +104,266 @@ class _QuestionQuizPageState extends ConsumerState<QuestionQuizPage> {
                       text: widget.question.choices[index],
                       index: index,
                       selectedIndex: _selectedIndex,
-                      correctIndex: widget.question.correctIndex,
+                      correctIndex:
+                      widget.question.correctIndex,
                       submitted: _submitted,
                       onTap: () {
                         if (_submitted) return;
-                        setState(() => _selectedIndex = index);
+
+                        setState(() {
+                          _selectedIndex = index;
+                        });
                       },
                     );
                   },
                 ),
               ),
+
               const SizedBox(height: 12),
+
               if (_submitted)
                 _ResultCard(
                   correct: isCorrect,
-                  explanation: widget.question.explanation,
+                  explanation:
+                  widget.question.explanation,
                 ),
+
               const SizedBox(height: 12),
+
               SizedBox(
                 width: double.infinity,
                 child: FilledButton(
-                  onPressed: _submitted ? null : _submitAnswer,
+                  onPressed:
+                  _submitted ? null : _submitAnswer,
                   child: const Text('回答する'),
                 ),
               ),
+
               if (_submitted && !isCorrect) ...[
                 const SizedBox(height: 8),
+
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(
                     onPressed: () {
                       ref
-                          .read(wrongQuestionIdsProvider.notifier)
+                          .read(
+                        wrongQuestionIdsProvider
+                            .notifier,
+                      )
                           .add(widget.question.id);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('間違えた問題に保存しました')),
+
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(
+                        const SnackBar(
+                          content:
+                          Text('間違えた問題に保存しました'),
+                        ),
                       );
                     },
-                    icon: const Icon(Icons.bookmark_add_outlined),
-                    label: const Text('間違えた問題として保存'),
+                    icon: const Icon(
+                      Icons.bookmark_add_outlined,
+                    ),
+                    label:
+                    const Text('間違えた問題として保存'),
                   ),
                 ),
               ],
+
               if (_submitted) ...[
                 const SizedBox(height: 8),
+
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(
                     onPressed: _aiLoading
                         ? null
                         : () async {
-                            setState(() => _aiLoading = true);
-                            final user = ref.read(firebaseAuthProvider).currentUser;
-                            if (user == null) return;
-<<<<<<< HEAD
-                            final usage = AiUsageService();
-                            final canUse = await usage.canUseAi(userId: user.uid);
-                            if (!canUse) {
-                              if (mounted) {
-                                showDialog<void>(context: context, builder: (_) => AlertDialog(title: const Text('利用上限'), content: const Text('本日の無料利用回数を超えました。\nProプランでAI機能を無制限利用できます。'), actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))]));
-=======
-                            final doc = FirebaseFirestore.instance.collection('ai_usage').doc(user.uid);
-                            final now = DateTime.now();
-                            final key = '${now.year}-${now.month}-${now.day}';
-                            final snap = await doc.get();
-                            final data = snap.data() ?? <String, dynamic>{};
-                            final date = data['date'] as String?;
-                            final count = (data['count'] as num?)?.toInt() ?? 0;
-                            final todayCount = date == key ? count : 0;
-                            if (todayCount >= 3) {
-                              if (mounted) {
-                                showDialog<void>(context: context, builder: (_) => AlertDialog(title: const Text('利用上限'), content: const Text('本日の無料回数を超えました。\nProプランで無制限利用できます。'), actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))]));
->>>>>>> main
-                              }
-                              setState(() => _aiLoading = false);
-                              return;
-                            }
-<<<<<<< HEAD
-                            await usage.consumeAiUse(userId: user.uid);
-=======
-                            await doc.set({'date': key, 'count': todayCount + 1});
->>>>>>> main
-                            final value = 'AI解説（モック）: ${widget.question.explanation}';
-                            if (!mounted) return;
-                            setState(() {
-                              _aiExplanation = value;
-                              _aiLoading = false;
-                            });
-                          },
-                    icon: const Icon(Icons.auto_awesome),
-                    label: Text(_aiLoading ? 'AI解説を生成中...' : 'AI解説を見る'),
+                      setState(() {
+                        _aiLoading = true;
+                      });
+
+                      final user = ref
+                          .read(firebaseAuthProvider)
+                          .currentUser;
+
+                      if (user == null) {
+                        setState(() {
+                          _aiLoading = false;
+                        });
+                        return;
+                      }
+
+                      final usage =
+                      AiUsageService();
+
+                      final canUse =
+                      await usage.canUseAi(
+                        userId: user.uid,
+                      );
+
+                      if (!canUse) {
+                        if (mounted) {
+                          showDialog<void>(
+                            context: context,
+                            builder: (_) =>
+                                AlertDialog(
+                                  title: const Text(
+                                      '利用上限'),
+                                  content: const Text(
+                                    '本日の無料利用回数を超えました。\n'
+                                        'ProプランでAI機能を無制限利用できます。',
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(
+                                            context);
+                                      },
+                                      child:
+                                      const Text('OK'),
+                                    ),
+                                  ],
+                                ),
+                          );
+                        }
+
+                        setState(() {
+                          _aiLoading = false;
+                        });
+
+                        return;
+                      }
+
+                      await usage.consumeAiUse(
+                        userId: user.uid,
+                      );
+
+                      final value =
+                          'AI解説（モック）: ${widget.question.explanation}';
+
+                      if (!mounted) return;
+
+                      setState(() {
+                        _aiExplanation = value;
+                        _aiLoading = false;
+                      });
+                    },
+                    icon:
+                    const Icon(Icons.auto_awesome),
+                    label: Text(
+                      _aiLoading
+                          ? 'AI解説を生成中...'
+                          : 'AI解説を見る',
+                    ),
                   ),
                 ),
               ],
+
               if (_aiExplanation != null) ...[
                 const SizedBox(height: 8),
+
                 Card(
                   child: Padding(
-                    padding: const EdgeInsets.all(12),
+                    padding:
+                    const EdgeInsets.all(12),
                     child: Text(_aiExplanation!),
                   ),
                 ),
               ],
+
               if (_submitted) ...[
                 const SizedBox(height: 12),
+
                 Row(
                   children: [
                     Expanded(
                       child: OutlinedButton.icon(
                         onPressed: () {
-                          final currentIndex = questions.indexWhere((q) => q.id == widget.question.id);
-                          final nextIndex = currentIndex >= 0
-                              ? (currentIndex + 1) % questions.length
+                          final currentIndex =
+                          questions.indexWhere(
+                                (q) =>
+                            q.id ==
+                                widget.question.id,
+                          );
+
+                          final nextIndex =
+                          currentIndex >= 0
+                              ? (currentIndex + 1) %
+                              questions.length
                               : 0;
-                          final nextQuestion = questions[nextIndex];
-                          Navigator.of(context).pushReplacement(
+
+                          final nextQuestion =
+                          questions[nextIndex];
+
+                          Navigator.of(context)
+                              .pushReplacement(
                             MaterialPageRoute<void>(
-                              builder: (_) => QuestionQuizPage(
-                                question: nextQuestion,
-                                questionNumber: nextIndex + 1,
-                              ),
+                              builder: (_) =>
+                                  QuestionQuizPage(
+                                    question:
+                                    nextQuestion,
+                                    questionNumber:
+                                    nextIndex + 1,
+                                  ),
                             ),
                           );
                         },
-                        icon: const Icon(Icons.arrow_forward),
+                        icon: const Icon(
+                          Icons.arrow_forward,
+                        ),
                         label: const Text('次へ'),
                       ),
                     ),
+
                     const SizedBox(width: 10),
+
                     Expanded(
                       child: FilledButton.icon(
                         onPressed: () {
                           final otherQuestions =
-                              questions.where((q) => q.id != widget.question.id).toList();
+                          questions
+                              .where(
+                                (q) =>
+                            q.id !=
+                                widget
+                                    .question
+                                    .id,
+                          )
+                              .toList();
+
                           otherQuestions.shuffle();
-                          final randomQuestion = otherQuestions.isEmpty
+
+                          final randomQuestion =
+                          otherQuestions.isEmpty
                               ? widget.question
-                              : otherQuestions.first;
+                              : otherQuestions
+                              .first;
+
                           final randomIndex =
-                              questions.indexWhere((q) => q.id == randomQuestion.id);
-                          Navigator.of(context).pushReplacement(
+                          questions.indexWhere(
+                                (q) =>
+                            q.id ==
+                                randomQuestion.id,
+                          );
+
+                          Navigator.of(context)
+                              .pushReplacement(
                             MaterialPageRoute<void>(
-                              builder: (_) => QuestionQuizPage(
-                                question: randomQuestion,
-                                questionNumber: (randomIndex + 1),
-                              ),
+                              builder: (_) =>
+                                  QuestionQuizPage(
+                                    question:
+                                    randomQuestion,
+                                    questionNumber:
+                                    randomIndex + 1,
+                                  ),
                             ),
                           );
                         },
-                        icon: const Icon(Icons.shuffle),
-                        label: const Text('ランダム'),
+                        icon:
+                        const Icon(Icons.shuffle),
+                        label:
+                        const Text('ランダム'),
                       ),
                     ),
                   ],
@@ -257,35 +378,55 @@ class _QuestionQuizPageState extends ConsumerState<QuestionQuizPage> {
 }
 
 class _ResultCard extends StatelessWidget {
-  const _ResultCard({required this.correct, required this.explanation});
+  const _ResultCard({
+    required this.correct,
+    required this.explanation,
+  });
 
   final bool correct;
   final String explanation;
 
   @override
   Widget build(BuildContext context) {
-    final color = correct ? Colors.green : Colors.red;
+    final color =
+    correct ? Colors.green : Colors.red;
 
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment:
+          CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(correct ? Icons.check_circle : Icons.cancel, color: color),
+                Icon(
+                  correct
+                      ? Icons.check_circle
+                      : Icons.cancel,
+                  color: color,
+                ),
+
                 const SizedBox(width: 8),
+
                 Text(
-                  correct ? '正解です！' : '不正解です',
+                  correct
+                      ? '正解です！'
+                      : '不正解です',
                   style: Theme.of(context)
                       .textTheme
                       .titleSmall
-                      ?.copyWith(color: color, fontWeight: FontWeight.bold),
+                      ?.copyWith(
+                    color: color,
+                    fontWeight:
+                    FontWeight.bold,
+                  ),
                 ),
               ],
             ),
+
             const SizedBox(height: 8),
+
             Text('解説: $explanation'),
           ],
         ),
