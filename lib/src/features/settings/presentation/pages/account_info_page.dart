@@ -25,11 +25,11 @@ class AccountInfoPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-<<<<<<< HEAD
+
                   Text('ユーザー情報', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
                   const SizedBox(height: 16),
                   _infoRow('メールアドレス', user?.email ?? '未設定'),
-=======
+
                   Text(
                     'ユーザー情報',
                     style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
@@ -38,7 +38,7 @@ class AccountInfoPage extends StatelessWidget {
                   _infoRow('メールアドレス', user?.email ?? '未設定'),
                   _infoRow('UID', user?.uid ?? '不明'),
                   _infoRow('登録日', _formatCreationDate(user)),
->>>>>>> main
+
                   _infoRow('現在プラン', 'Free'),
                 ],
               ),
@@ -49,25 +49,24 @@ class AccountInfoPage extends StatelessWidget {
     );
   }
 
-<<<<<<< HEAD
-=======
+
   String _formatCreationDate(User? user) {
     final creationTime = user?.metadata.creationTime;
     if (creationTime == null) return '取得できません';
     return '${creationTime.year}/${creationTime.month.toString().padLeft(2, '0')}/${creationTime.day.toString().padLeft(2, '0')}';
   }
 
->>>>>>> main
+
   Widget _infoRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-<<<<<<< HEAD
+
           SizedBox(width: 110, child: Text(label, style: const TextStyle(color: Colors.grey))),
           Expanded(child: Text(value, style: const TextStyle(fontWeight: FontWeight.w600))),
-=======
+
           SizedBox(
             width: 110,
             child: Text(label, style: const TextStyle(color: Colors.grey)),
@@ -75,7 +74,7 @@ class AccountInfoPage extends StatelessWidget {
           Expanded(
             child: Text(value, style: const TextStyle(fontWeight: FontWeight.w600)),
           ),
->>>>>>> main
+
         ],
       ),
     );
