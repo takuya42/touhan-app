@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'src/core/theme/app_theme.dart';
 import 'src/features/auth/application/auth_providers.dart';
 import 'src/features/auth/presentation/pages/auth_gate.dart';
+import 'src/features/settings/presentation/widgets/force_update_gate.dart';
 
 class TouhanApp extends ConsumerWidget {
   const TouhanApp({super.key});
@@ -17,7 +18,7 @@ class TouhanApp extends ConsumerWidget {
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: darkMode ? ThemeMode.dark : ThemeMode.light,
-      home: const AuthGate(),
+      home: const ForceUpdateGate(child: AuthGate()),
     );
   }
 }
