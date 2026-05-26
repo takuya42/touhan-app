@@ -1,4 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import '../../../settings/presentation/pages/privacy_policy_page.dart';
+import '../../../settings/presentation/pages/terms_page.dart';
 
 class ProPlanPage extends StatelessWidget {
   const ProPlanPage({super.key});
@@ -6,173 +10,94 @@ class ProPlanPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Proプラン'),
-      ),
+      appBar: AppBar(title: const Text('Proプラン')),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
           Container(
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [
-                  Color(0xFF6EE7B7),
-                  Color(0xFF34D399),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(28),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.08),
-                  blurRadius: 18,
-                  offset: const Offset(0, 10),
-                ),
-              ],
+              gradient: const LinearGradient(colors: [Color(0xFF60A5FA), Color(0xFF3B82F6)]),
+              borderRadius: BorderRadius.circular(24),
             ),
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Column(
-                crossAxisAlignment:
-                CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius:
-                      BorderRadius.circular(30),
-                    ),
-                    child: const Text(
-                      'おすすめ',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  const Text(
-                    'Proプラン',
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white,
-                    ),
-                  ),
-
+                  const Text('PRO', style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 12),
+                  const Text('買い切り 980円', style: TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.white)),
                   const SizedBox(height: 8),
-
-                  const Text(
-                    '買い切り 980円',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-
-                  _feature(
-                    Icons.quiz_outlined,
-                    '問題回答 無制限',
-                  ),
-
-                  _feature(
-                    Icons.analytics_outlined,
-                    '苦手分析',
-                  ),
-                  _feature(
-                    Icons.history,
-                    '学習履歴',
-                  ),
-
-                  _feature(
-                    Icons.update,
-                    '今後の追加機能も利用可能',
-                  ),
+                  const Text('一度の購入で、継続課金なし', style: TextStyle(color: Colors.white)),
+                  const SizedBox(height: 18),
+                  _feature('問題回答 無制限'),
+                  _feature('苦手分析'),
+                  _feature('学習履歴の活用'),
                 ],
               ),
             ),
           ),
-
-          const SizedBox(height: 24),
-
+          const SizedBox(height: 20),
           SizedBox(
-            height: 56,
-            child: FilledButton.icon(
+            height: 54,
+            child: FilledButton(
               onPressed: () {},
-              icon: const Icon(
-                Icons.workspace_premium_outlined,
-              ),
-              label: const Text(
-                '購入する（準備中）',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              style: FilledButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius:
-                  BorderRadius.circular(18),
-                ),
-              ),
+              child: const Text('購入する（準備中）', style: TextStyle(fontWeight: FontWeight.bold)),
             ),
           ),
-
-          const SizedBox(height: 12),
-
-          const Center(
-            child: Text(
-              '一度購入すると追加料金なしで利用できます',
-              style: TextStyle(
-                color: Colors.grey,
-              ),
+          const SizedBox(height: 10),
+          OutlinedButton.icon(
+            onPressed: () {},
+            icon: const Icon(CupertinoIcons.refresh),
+            label: const Text('Restore Purchases'),
+          ),
+          const SizedBox(height: 16),
+          Card(
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+              side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
             ),
+            child: Column(
+              children: [
+                ListTile(
+                  leading: const Icon(CupertinoIcons.doc_text),
+                  title: const Text('利用規約'),
+                  trailing: const Icon(CupertinoIcons.chevron_forward, size: 18),
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const TermsPage()));
+                  },
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: const Icon(CupertinoIcons.lock_shield),
+                  title: const Text('プライバシーポリシー'),
+                  trailing: const Icon(CupertinoIcons.chevron_forward, size: 18),
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const PrivacyPolicyPage()));
+                  },
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            '※ App Store Reviewを考慮し、購入前に利用規約とプライバシーポリシーをご確認いただけます。',
+            style: TextStyle(color: Colors.grey, fontSize: 12),
           ),
         ],
       ),
     );
   }
 
-  Widget _feature(
-      IconData icon,
-      String text,
-      ) {
+  Widget _feature(String text) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.only(bottom: 10),
       child: Row(
         children: [
-          const CircleAvatar(
-            radius: 16,
-            backgroundColor: Colors.white,
-            child: Icon(
-              Icons.check,
-              color: Color(0xFF34D399),
-              size: 18,
-            ),
-          ),
-
-          const SizedBox(width: 12),
-
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
-            ),
-          ),
+          const Icon(Icons.check_circle, color: Colors.white),
+          const SizedBox(width: 8),
+          Text(text, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
         ],
       ),
     );

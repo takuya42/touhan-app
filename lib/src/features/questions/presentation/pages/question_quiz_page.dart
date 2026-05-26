@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../application/question_providers.dart';
+import '../../application/plan_access_service.dart';
 import '../../application/study_persistence.dart';
 import '../../domain/question.dart';
 import '../widgets/choice_tile.dart';
@@ -26,8 +27,17 @@ class _QuestionQuizPageState
   int? _selectedIndex;
   bool _submitted = false;
 
-  void _submitAnswer() {
+  Future<void> _submitAnswer() async {
     if (_selectedIndex == null) return;
+
+    final usage = await ref.read(planAccessServiceProvider).getUsageStatus();
+    if (!usage.canAnswer) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Freeプランの回答上限に達しました。Proプランで無制限になります。')),
+      );
+      return;
+    }
 
     final selected = _selectedIndex!;
     final isCorrect = widget.question.isCorrect(selected);
@@ -58,7 +68,8 @@ class _QuestionQuizPageState
       ...ref.read(studyHistoryProvider),
     ];
 
-    ref.read(studyPersistenceProvider).save(ref);
+    await ref.read(planAccessServiceProvider).incrementCountIfNeeded();
+    await ref.read(studyPersistenceProvider).save(ref);
   }
 
   @override
@@ -129,8 +140,7 @@ class _QuestionQuizPageState
               SizedBox(
                 width: double.infinity,
                 child: FilledButton(
-                  onPressed:
-                  _submitted ? null : _submitAnswer,
+                  onPressed: _submitted ? null : _submitAnswer,
                   child: const Text('回答する'),
                 ),
               ),
