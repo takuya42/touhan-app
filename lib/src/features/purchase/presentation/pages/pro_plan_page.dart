@@ -81,10 +81,14 @@ class ProPlanPage extends StatelessWidget {
 
 
                   _feature(
+                    Icons.quiz_outlined,
+                    '問題回答 無制限',
+                  ),
+
+                  _feature(
                     Icons.analytics_outlined,
                     '苦手分析',
                   ),
-
                   _feature(
                     Icons.history,
                     '学習履歴',
