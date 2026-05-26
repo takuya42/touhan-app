@@ -1,20 +1,24 @@
-enum QuestionCategory { medicine, humanBody, law, kampo, pharmaLaw, safety }
+enum QuestionCategory {
+  commonBasics,
+  humanBodyAndMedicine,
+  mainMedicines,
+  pharmaRegulations,
+  properUseSafety,
+}
 
 extension QuestionCategoryX on QuestionCategory {
   String get label {
     switch (this) {
-      case QuestionCategory.medicine:
-        return '医薬品';
-      case QuestionCategory.humanBody:
-        return '人体';
-      case QuestionCategory.law:
-        return '法規';
-      case QuestionCategory.kampo:
-        return '漢方';
-      case QuestionCategory.pharmaLaw:
-        return '薬事関係法規';
-      case QuestionCategory.safety:
-        return '安全対策';
+      case QuestionCategory.commonBasics:
+        return '医薬品に共通する特性と基本的な知識';
+      case QuestionCategory.humanBodyAndMedicine:
+        return '人体の働きと医薬品';
+      case QuestionCategory.mainMedicines:
+        return '主な医薬品とその作用';
+      case QuestionCategory.pharmaRegulations:
+        return '薬事関連法規・制度';
+      case QuestionCategory.properUseSafety:
+        return '医薬品の適正使用・安全対策';
     }
   }
 }
