@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyC2sssP2SREUmzS20iu16Rbv0HrY1NlZn8</string>
+	<key>GCM_SENDER_ID</key>
+	<string>808345326532</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.touhan.study.touhanStudy</string>
+	<key>PROJECT_ID</key>
+	<string>touhan-study</string>
+	<key>STORAGE_BUCKET</key>
+	<string>touhan-study.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:808345326532:ios:da0021e4579b0fc7e48a91</string>
+</dict>
+</plist>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "808345326532",
+    "project_id": "touhan-study",
+    "storage_bucket": "touhan-study.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:808345326532:android:70b685f311991a9ce48a91",
+        "android_client_info": {
+          "package_name": "com.touhan.study.touhan_study"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGqg0fq4Q9styJMmXjH7AuuIOD8OhFbSs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
