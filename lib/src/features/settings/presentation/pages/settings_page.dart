@@ -8,6 +8,7 @@ import '../../../purchase/presentation/pages/pro_plan_page.dart';
 import '../../../questions/application/question_providers.dart';
 import '../../../questions/application/study_persistence.dart';
 import 'account_info_page.dart';
+import 'admin_pro_users_page.dart';
 import 'privacy_policy_page.dart';
 import 'terms_page.dart';
 
@@ -44,6 +45,11 @@ class SettingsPage extends ConsumerWidget {
             _item(context, 'お問い合わせ', CupertinoIcons.mail, onTap: () async {
               final uri = Uri.parse('https://docs.google.com/forms/d/e/1FAIpQLSe_ku1s4EP-7nWw_wZDb27gJeRdppEh4Hb20cwF1cj1aIlCOg/viewform?usp=dialog');
               await launchUrl(uri);
+            }),
+          ]),
+          _sectionCard(context, '管理', [
+            _item(context, 'Proユーザー管理', CupertinoIcons.person_2_square_stack, onTap: () {
+              Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const AdminProUsersPage()));
             }),
           ]),
           _sectionCard(context, 'その他', [
