@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+<<<<<<< HEAD
+import '../../../auth/application/auth_providers.dart';
+import '../../application/ai_usage_service.dart';
+=======
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../auth/application/auth_providers.dart';
+>>>>>>> main
 import '../../application/question_providers.dart';
 import '../../application/study_persistence.dart';
 import '../../domain/question.dart';
@@ -141,6 +146,13 @@ class _QuestionQuizPageState extends ConsumerState<QuestionQuizPage> {
                             setState(() => _aiLoading = true);
                             final user = ref.read(firebaseAuthProvider).currentUser;
                             if (user == null) return;
+<<<<<<< HEAD
+                            final usage = AiUsageService();
+                            final canUse = await usage.canUseAi(userId: user.uid);
+                            if (!canUse) {
+                              if (mounted) {
+                                showDialog<void>(context: context, builder: (_) => AlertDialog(title: const Text('利用上限'), content: const Text('本日の無料利用回数を超えました。\nProプランでAI機能を無制限利用できます。'), actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))]));
+=======
                             final doc = FirebaseFirestore.instance.collection('ai_usage').doc(user.uid);
                             final now = DateTime.now();
                             final key = '${now.year}-${now.month}-${now.day}';
@@ -152,11 +164,16 @@ class _QuestionQuizPageState extends ConsumerState<QuestionQuizPage> {
                             if (todayCount >= 3) {
                               if (mounted) {
                                 showDialog<void>(context: context, builder: (_) => AlertDialog(title: const Text('利用上限'), content: const Text('本日の無料回数を超えました。\nProプランで無制限利用できます。'), actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))]));
+>>>>>>> main
                               }
                               setState(() => _aiLoading = false);
                               return;
                             }
+<<<<<<< HEAD
+                            await usage.consumeAiUse(userId: user.uid);
+=======
                             await doc.set({'date': key, 'count': todayCount + 1});
+>>>>>>> main
                             final value = 'AI解説（モック）: ${widget.question.explanation}';
                             if (!mounted) return;
                             setState(() {

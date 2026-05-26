@@ -7,8 +7,13 @@ import '../../../questions/application/question_providers.dart';
 import '../../../questions/application/study_persistence.dart';
 import '../../../questions/domain/question.dart';
 import '../../../questions/presentation/pages/question_list_page.dart';
+<<<<<<< HEAD
+import '../../../settings/presentation/pages/settings_page.dart';
+import '../../../questions/presentation/pages/ai_assistant_page.dart';
+=======
 import '../../../questions/presentation/pages/question_quiz_page.dart';
 import '../../../settings/presentation/pages/settings_page.dart';
+>>>>>>> main
 
 class HomeShellPage extends ConsumerStatefulWidget {
   const HomeShellPage({super.key});
@@ -74,10 +79,17 @@ class _HomeDashboard extends ConsumerWidget { const _HomeDashboard({required thi
         Row(children:[Expanded(child: _stat('正解', '$correct')), const SizedBox(width: 12), Expanded(child: _stat('不正解', '$wrong'))]),
       ]))),
       const SizedBox(height: 14),
+<<<<<<< HEAD
+      Card(child: Padding(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children:[Row(children:[Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: const Color(0xFFEAFBF6), borderRadius: BorderRadius.circular(14)), child: const Icon(Icons.emoji_events_outlined)), const SizedBox(width: 10), const Text('ランキング風 学習表示', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700))]), const SizedBox(height: 10), Text('現在の連続正解: $streak 問', style: const TextStyle(fontSize: 16)), const SizedBox(height: 8), const LinearProgressIndicator(value: 0.65)]))),
+      const SizedBox(height: 12),
+      ...QuestionCategory.values.map((c) => Card(child: ListTile(leading: const Icon(Icons.book_outlined), title: Text(c.label), trailing: const Icon(Icons.chevron_right), onTap: onStart))),
+      const SizedBox(height: 16), FilledButton.icon(onPressed: onStart, icon: const Icon(Icons.play_arrow_rounded), label: const Text('問題を解く')), const SizedBox(height: 12), OutlinedButton.icon(onPressed: () => Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const AiAssistantPage())), icon: const Icon(Icons.auto_awesome_outlined), label: const Text('AI学習アシスタント'))
+=======
       Card(child: ListTile(leading: const CircleAvatar(child: Icon(Icons.emoji_events_outlined)), title: const Text('ランキング風 学習表示'), subtitle: Text('現在の連続正解: $streak 問'))),
       const SizedBox(height: 12),
       ...QuestionCategory.values.map((c) => Card(child: ListTile(leading: const Icon(Icons.book_outlined), title: Text(c.label), trailing: const Icon(Icons.chevron_right), onTap: onStart))),
       const SizedBox(height: 16), FilledButton.icon(onPressed: onStart, icon: const Icon(Icons.play_arrow_rounded), label: const Text('問題を解く'))
+>>>>>>> main
     ]);
   }
   Widget _stat(String l, String v)=>Container(padding:const EdgeInsets.all(16),decoration:BoxDecoration(color:const Color(0xFFEAFBF6),borderRadius:BorderRadius.circular(18)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text(l),Text(v,style:const TextStyle(fontSize:24,fontWeight:FontWeight.w700))]));

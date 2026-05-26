@@ -14,9 +14,15 @@ class ProPlanPage extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: const [
+<<<<<<< HEAD
+                Text('買い切り 980円', style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
+                SizedBox(height: 12),
+                Text('・AI機能無制限\n・広告なし\n・苦手分析\n・学習履歴\n・今後の追加機能も利用可能'),
+=======
                 Text('買い切り 1,580円', style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
                 SizedBox(height: 12),
                 Text('・AI無制限\n・広告なし\n・今後の追加機能も利用可能'),
+>>>>>>> main
               ]),
             ),
           ),
