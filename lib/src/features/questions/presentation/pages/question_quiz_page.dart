@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../auth/application/auth_providers.dart';
-import '../../application/ai_usage_service.dart';
 import '../../application/question_providers.dart';
 import '../../application/study_persistence.dart';
 import '../../domain/question.dart';
@@ -27,8 +25,6 @@ class _QuestionQuizPageState
     extends ConsumerState<QuestionQuizPage> {
   int? _selectedIndex;
   bool _submitted = false;
-  String? _aiExplanation;
-  bool _aiLoading = false;
 
   void _submitAnswer() {
     if (_selectedIndex == null) return;
@@ -166,108 +162,6 @@ class _QuestionQuizPageState
                     ),
                     label:
                     const Text('間違えた問題として保存'),
-                  ),
-                ),
-              ],
-
-              if (_submitted) ...[
-                const SizedBox(height: 8),
-
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    onPressed: _aiLoading
-                        ? null
-                        : () async {
-                      setState(() {
-                        _aiLoading = true;
-                      });
-
-                      final user = ref
-                          .read(firebaseAuthProvider)
-                          .currentUser;
-
-                      if (user == null) {
-                        setState(() {
-                          _aiLoading = false;
-                        });
-                        return;
-                      }
-
-                      final usage =
-                      AiUsageService();
-
-                      final canUse =
-                      await usage.canUseAi(
-                        userId: user.uid,
-                      );
-
-                      if (!canUse) {
-                        if (mounted) {
-                          showDialog<void>(
-                            context: context,
-                            builder: (_) =>
-                                AlertDialog(
-                                  title: const Text(
-                                      '利用上限'),
-                                  content: const Text(
-                                    '本日の無料利用回数を超えました。\n'
-                                        'ProプランでAI機能を無制限利用できます。',
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(
-                                            context);
-                                      },
-                                      child:
-                                      const Text('OK'),
-                                    ),
-                                  ],
-                                ),
-                          );
-                        }
-
-                        setState(() {
-                          _aiLoading = false;
-                        });
-
-                        return;
-                      }
-
-                      await usage.consumeAiUse(
-                        userId: user.uid,
-                      );
-
-                      final value =
-                          'AI解説（モック）: ${widget.question.explanation}';
-
-                      if (!mounted) return;
-
-                      setState(() {
-                        _aiExplanation = value;
-                        _aiLoading = false;
-                      });
-                    },
-                    icon:
-                    const Icon(Icons.auto_awesome),
-                    label: Text(
-                      _aiLoading
-                          ? 'AI解説を生成中...'
-                          : 'AI解説を見る',
-                    ),
-                  ),
-                ),
-              ],
-
-              if (_aiExplanation != null) ...[
-                const SizedBox(height: 8),
-
-                Card(
-                  child: Padding(
-                    padding:
-                    const EdgeInsets.all(12),
-                    child: Text(_aiExplanation!),
                   ),
                 ),
               ],
