@@ -46,11 +46,15 @@ class ProPlanPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
+<<<<<<< HEAD
           OutlinedButton.icon(
             onPressed: () {},
             icon: const Icon(CupertinoIcons.refresh),
             label: const Text('Restore Purchases'),
           ),
+=======
+
+>>>>>>> main
           const SizedBox(height: 16),
           Card(
             elevation: 0,
