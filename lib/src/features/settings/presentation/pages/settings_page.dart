@@ -39,9 +39,21 @@ class SettingsPage extends ConsumerWidget {
             _item(context, '利用規約', CupertinoIcons.doc_text, onTap: () {
               Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const TermsPage()));
             }),
-            _item(context, 'プライバシーポリシー', CupertinoIcons.lock_shield, onTap: () {
-              Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const PrivacyPolicyPage()));
-            }),
+            _item(
+              context,
+              'プライバシーポリシー',
+              CupertinoIcons.lock_shield,
+              onTap: () async {
+                final uri = Uri.parse(
+                  'https://www.notion.so/flutter-family/36cb5c1f2cef80439ad0c92bacd8a568?source=copy_link',
+                );
+
+                await launchUrl(
+                  uri,
+                  mode: LaunchMode.externalApplication,
+                );
+              },
+            ),
             _item(context, 'お問い合わせ', CupertinoIcons.mail, onTap: () async {
               final uri = Uri.parse('https://docs.google.com/forms/d/e/1FAIpQLSe_ku1s4EP-7nWw_wZDb27gJeRdppEh4Hb20cwF1cj1aIlCOg/viewform?usp=dialog');
               await launchUrl(uri);
