@@ -42,15 +42,11 @@ class ProPlanPage extends StatelessWidget {
             height: 54,
             child: FilledButton(
               onPressed: () {},
-              child: const Text('購入する（準備中）', style: TextStyle(fontWeight: FontWeight.bold)),
+              child: const Text('購入する', style: TextStyle(fontWeight: FontWeight.bold)),
             ),
           ),
           const SizedBox(height: 10),
-          OutlinedButton.icon(
-            onPressed: () {},
-            icon: const Icon(CupertinoIcons.refresh),
-            label: const Text('Restore Purchases'),
-          ),
+
 
           const SizedBox(height: 16),
           Card(

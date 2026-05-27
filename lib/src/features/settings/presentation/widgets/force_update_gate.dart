@@ -26,7 +26,8 @@ class ForceUpdateState {
 /// Remote Config Provider
 /// ===============================
 
-final remoteConfigProvider = Provider<FirebaseRemoteConfig>((ref) {
+final remoteConfigProvider =
+Provider<FirebaseRemoteConfig>((ref) {
   return FirebaseRemoteConfig.instance;
 });
 
@@ -41,9 +42,16 @@ FutureProvider<ForceUpdateState>((ref) async {
   await remoteConfig.setConfigSettings(
     RemoteConfigSettings(
       fetchTimeout: const Duration(seconds: 10),
-      minimumFetchInterval: const Duration(hours: 1),
+
+      /// 開発中はキャッシュなし
+      minimumFetchInterval: Duration.zero,
     ),
   );
+
+  /// デフォルト値
+  await remoteConfig.setDefaults({
+    'minimum_version_ios': '1.0.0',
+  });
 
   await remoteConfig.fetchAndActivate();
 
@@ -51,12 +59,18 @@ FutureProvider<ForceUpdateState>((ref) async {
 
   final currentVersion = packageInfo.version;
 
-  final minimumVersion = Platform.isIOS
-      ? remoteConfig.getString('minimum_version_ios')
-      : remoteConfig.getString('minimum_version_android');
+  final minimumVersion =
+  remoteConfig.getString('minimum_version_ios');
 
-  final required =
-  _isVersionLower(currentVersion, minimumVersion);
+  debugPrint('====================');
+  debugPrint('currentVersion: $currentVersion');
+  debugPrint('minimumVersion: $minimumVersion');
+  debugPrint('====================');
+
+  final required = _isVersionLower(
+    currentVersion,
+    minimumVersion,
+  );
 
   return ForceUpdateState(
     required: required,
@@ -79,7 +93,12 @@ bool _isVersionLower(
   final minimum =
   minimumVersion.split('.').map(int.parse).toList();
 
-  for (int i = 0; i < minimum.length; i++) {
+  final maxLength =
+  current.length > minimum.length
+      ? current.length
+      : minimum.length;
+
+  for (int i = 0; i < maxLength; i++) {
     final currentPart =
     i < current.length ? current[i] : 0;
 
@@ -165,9 +184,11 @@ class _ForceUpdateGateState
   }
 
   Future<void> _openStore() async {
-    final url = Platform.isIOS
-        ? 'https://apps.apple.com/jp/app/idXXXXXXXXXX'
-        : 'https://play.google.com/store/apps/details?id=com.example.app';
+    if (!Platform.isIOS) return;
+
+    /// App Store URL
+    const url =
+        'https://apps.apple.com/jp/app/idXXXXXXXXXX';
 
     final uri = Uri.parse(url);
 
