@@ -26,8 +26,32 @@ class _QuestionQuizPageState
   int? _selectedIndex;
   bool _submitted = false;
 
-  void _submitAnswer() {
+  Future<void> _submitAnswer() async {
     if (_selectedIndex == null) return;
+
+    final limitResult = await ref
+        .read(freeAnswerLimitServiceProvider)
+        .consumeAnswerAttempt();
+
+    if (!limitResult.canAnswer) {
+      if (!mounted) return;
+      await showDialog<void>(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('利用上限に達しました'),
+            content: const Text('Proプランで無制限に利用できます'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('閉じる'),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
 
     final selected = _selectedIndex!;
     final isCorrect = widget.question.isCorrect(selected);
@@ -129,8 +153,11 @@ class _QuestionQuizPageState
               SizedBox(
                 width: double.infinity,
                 child: FilledButton(
-                  onPressed:
-                  _submitted ? null : _submitAnswer,
+                  onPressed: _submitted
+                      ? null
+                      : () async {
+                          await _submitAnswer();
+                        },
                   child: const Text('回答する'),
                 ),
               ),
